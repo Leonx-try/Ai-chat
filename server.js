@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const app = express();
 app.use(express.json());
 
@@ -9,8 +10,12 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
 app.post("/chat", async (req, res) => {
-  try { 
+  try {
     const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -24,19 +29,16 @@ app.post("/chat", async (req, res) => {
     });
 
     const d = await r.json();
-    console.log(d);
-
     if (d.choices) {
       res.json({ reply: d.choices[0].message.content });
     } else {
       res.json({ reply: "API Error: " + JSON.stringify(d) });
     }
-
   } catch (err) {
     res.json({ reply: "Error: " + err.message });
   }
 });
 
-app.listen(4000, () => {
-  console.log("Server running on port 4000");
+app.listen(process.env.PORT || 4000, () => {
+  console.log("Server running!");
 });
