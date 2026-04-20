@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 app.use(express.json());
@@ -14,7 +15,7 @@ app.post("/chat", async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer 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"
+        "Authorization": "Bearer " + process.env.GROQ_API_KEY
       },
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
